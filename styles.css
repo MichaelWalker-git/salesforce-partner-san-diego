@@ -221,7 +221,9 @@ body {
 }
 
 .sf-icon {
-    font-size: 28px;
+    display: flex;
+    align-items: center;
+    line-height: 0;
 }
 
 .sf-text {
@@ -319,9 +321,10 @@ body {
 }
 
 .bridge-box .box-icon {
-    font-size: 3rem;
     margin-bottom: 1rem;
-    display: block;
+    display: flex;
+    justify-content: center;
+    line-height: 0;
 }
 
 .bridge-box h3 {
@@ -559,9 +562,10 @@ body {
 }
 
 .why-card .icon {
-    font-size: 3rem;
     margin-bottom: 1.5rem;
-    display: block;
+    display: flex;
+    justify-content: center;
+    line-height: 0;
 }
 
 .why-card h3 {
