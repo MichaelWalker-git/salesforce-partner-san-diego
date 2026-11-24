@@ -443,21 +443,25 @@
             <h4>See what AI can do with your Salesforce data</h4>
             <h2>Start Your Salesforce + AI Journey</h2>
         </div>
-        <form id="contact-form" class="contact-form">
+        <form id="contact-form" class="contact-form" method="post">
             <div class="form-row">
                 <div class="form-group">
-                    <input type="text" id="fullName" name="fullName" required placeholder="Full Name">
+                    <label for="fullName">Full name</label>
+                    <input type="text" id="fullName" name="fullName" required minlength="2" maxlength="100" autocomplete="name" placeholder="Full Name">
                 </div>
                 <div class="form-group">
-                    <input type="email" id="email" name="email" required placeholder="Email">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required maxlength="254" autocomplete="email" placeholder="Email">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <input type="text" id="company" name="company" placeholder="Company">
+                    <label for="company">Company (optional)</label>
+                    <input type="text" id="company" name="company" maxlength="200" autocomplete="organization" placeholder="Company">
                 </div>
                 <div class="form-group">
-                    <select id="interest" name="interest">
+                    <label for="interest">What are you interested in?</label>
+                    <select id="interest" name="interest" required>
                         <option value="" disabled selected>What are you interested in?</option>
                         <option value="integration">Salesforce + AWS Integration</option>
                         <option value="implementation">Salesforce Implementation</option>
@@ -467,11 +471,20 @@
                 </div>
             </div>
             <div class="form-group full">
-                <textarea id="message" name="message" rows="5" required placeholder="Tell us about your Salesforce environment and goals..."></textarea>
+                <label for="message">Your Salesforce environment and goals</label>
+                <textarea id="message" name="message" rows="5" minlength="10" maxlength="5000" required placeholder="Tell us about your Salesforce environment and goals..."></textarea>
             </div>
+            <div class="contact-trap" aria-hidden="true">
+                <label for="website">Leave this field empty</label>
+                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+            <p class="contact-note">Please do not include customer records, passwords, or other sensitive information. We use your details to follow up and retain the inquiry record for up to 180 days. <a href="https://www.horustech.dev/privacy">Privacy policy</a>.</p>
             <div class="submit-btn">
                 <button type="submit">Get Free Assessment</button>
             </div>
+            <p id="form-status" class="contact-note" role="status" aria-live="polite" aria-atomic="true"></p>
+            <p class="contact-note">You can also email <a href="mailto:michael@horustech.dev">michael@horustech.dev</a>.</p>
+            <noscript><p>Please email michael@horustech.dev to request an assessment.</p></noscript>
         </form>
     </div>
 </section>
@@ -542,27 +555,9 @@
         });
     });
 
-    // Contact form - Gmail submit
-    document.getElementById('contact-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const name = document.getElementById('fullName').value;
-        const from = document.getElementById('email').value;
-        const company = document.getElementById('company').value;
-        const interest = document.getElementById('interest').value;
-        const message = document.getElementById('message').value;
-        const subject = encodeURIComponent("Salesforce Partner Inquiry from " + name);
-        const body = encodeURIComponent(
-            "Name: " + name +
-            "\nEmail: " + from +
-            "\nCompany: " + (company || "Not provided") +
-            "\nInterest: " + (interest || "Not specified") +
-            "\n\nMessage:\n" + message
-        );
-        const to = "proposals@horustech.dev";
-        const gmailUrl = "https://mail.google.com/mail/?view=cm&fs=1&to=" + to + "&su=" + subject + "&body=" + body;
-        window.open(gmailUrl, '_blank');
-    });
 </script>
 
+<script src="config.js"></script>
+<script src="contact.js"></script>
 </body>
 </html>

@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Dedicated Salesforce website contact intake and email notification.
+
+Parameters:
+  AllowedOrigin:
+    Type: CommaDelimitedList
+    Description: Exact origin allowed to submit the form.
+    Default: https://www.salesforcepartnersandiego.com,https://salesforcepartnersandiego.com
+  SenderEmail:
+    Type: String
+    Description: SES-verified sender email in the deployment Region.
+  AdminEmail:
+    Type: String
+    Description: Horus mailbox receiving form notifications.
+    Default: michael@horustech.dev
+
+Resources:
+  ContactTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: salesforce-site-contact
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  ContactApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 5
+        ThrottlingRateLimit: 2
+      CorsConfiguration:
+        AllowOrigins: !Ref AllowedOrigin
+        AllowHeaders:
+          - content-type
+        AllowMethods:
+          - POST
+          - OPTIONS
+        MaxAge: 600
+
+  ContactFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: contact.handler
+      Runtime: python3.12
+      Timeout: 10
+      MemorySize: 128
+      Environment:
+        Variables:
+          CONTACT_TABLE: !Ref ContactTable
+          SES_FROM_EMAIL: !Ref SenderEmail
+          SES_ADMIN_EMAIL: !Ref AdminEmail
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action: dynamodb:PutItem
+              Resource: !GetAtt ContactTable.Arn
+            - Effect: Allow
+              Action: ses:SendEmail
+              Resource: !Sub arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:identity/${SenderEmail}
+      Events:
+        ContactPost:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ContactApi
+            Path: /contact
+            Method: POST
+
+Outputs:
+  ContactEndpoint:
+    Description: Configure this URL in config.js after deployment.
+    Value: !Sub https://${ContactApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/contact
