@@ -189,6 +189,24 @@ body {
     border: 1px solid rgba(0, 161, 224, 0.3);
 }
 
+.badge-azure {
+    border: 1px solid rgba(0, 120, 212, 0.3);
+}
+
+.azure-icon {
+    display: flex;
+    align-items: center;
+    line-height: 0;
+}
+
+.azure-text {
+    color: #0078D4;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
 .aws-logo-text {
     display: flex;
     flex-direction: column;
